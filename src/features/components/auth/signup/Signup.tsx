@@ -1,4 +1,4 @@
-import { View, Alert, ActivityIndicator, Image } from 'react-native';
+import { View, Alert, ActivityIndicator } from 'react-native';
 import { ImageBackground, Text } from 'react-native';
 import { signupStyles } from './Signup.ts';
 import { ClassicTextInput } from '../../../../common/textInput/TextInput.tsx';
@@ -16,7 +16,7 @@ export const Signup = () => {
     const [password, usePassword] = useState('');
     const [passwordConfimation, usePasswordConfimation] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedAsset, setSelectedAsset] = useState<any>(null);
+    const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
     const navigation = useNavigation();
     const activity = (
         <ActivityIndicator
@@ -27,31 +27,48 @@ export const Signup = () => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!regex.test(email)) {
             Alert.alert('Wrong email!');
+        } else if (!password.trim()) {
+            Alert.alert('Enter a password');
         } else if (password !== passwordConfimation) {
             Alert.alert("Password doesn't match!");
         } else {
             setIsLoading(true);
             try {
-                console.log('1. Початок реєстрації...');
-                const response = await signupPost({ email, password });
-                console.log('2. Відповідь сервера (повна):', response.data);
-                const userId = response.data
-                    ? response.data.userid
-                    : response.userid;
-                console.log('3. ID отримано:', userId);
-                await uploadAvatar({
-                    userId: userId,
-                    imageUri: selectedAsset,
+                const response = await signupPost({
+                    email: email.trim(),
+                    password,
                 });
-                console.log('5. Завантаження фото завершено');
+                const userId = response.data?.userid ?? response.userid;
+                if (selectedAsset) {
+                    try {
+                        if (userId == null) {
+                            throw new Error('Missing user ID');
+                        }
+                        await uploadAvatar({
+                            userId: String(userId),
+                            imageUri: selectedAsset,
+                        });
+                    } catch {
+                        Alert.alert(
+                            'Account created',
+                            'Your photo could not be uploaded. You can still log in.',
+                        );
+                        navigation.goBack();
+                        return;
+                    }
+                }
+                Alert.alert('Account created', 'You can now log in.');
+                navigation.goBack();
             } catch (error) {
                 if (axios.isAxiosError(error))
                     Alert.alert(
                         'Unexpected error',
                         JSON.stringify(error.response?.data),
                     );
+                else Alert.alert('Unexpected error', 'Please try again.');
+            } finally {
+                setIsLoading(false);
             }
-            setIsLoading(false);
         }
     };
     return (

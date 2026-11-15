@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ProfileScreen } from '../features/components/profileScreen/profileScreen.tsx';
 import { ShopScreen } from '../features/components/shopScreen/shopScreen.tsx';
 import { CartScreen } from '../features/components/cartScreen/cartScreen.tsx';
-import { Image } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import React from 'react';
 
 const TAB_ICONS: Record<string, { on: any; off: any }> = {
@@ -24,13 +24,19 @@ const TAB_ICONS: Record<string, { on: any; off: any }> = {
     },
 };
 
+const styles = StyleSheet.create({ icon: { width: 24, height: 24 } });
+
 const TabNavigator = createBottomTabNavigator({
+    initialRouteName: 'Shop',
     screenOptions: ({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused }: any): React.ReactNode => {
             const iconSource = TAB_ICONS[route.name][focused ? 'on' : 'off'];
 
-            return;
+            return React.createElement(Image, {
+                source: iconSource,
+                style: styles.icon,
+            });
         },
     }),
     screens: {

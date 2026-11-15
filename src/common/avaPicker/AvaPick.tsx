@@ -1,9 +1,9 @@
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { Alert, TouchableOpacity } from 'react-native';
 import { launchImageLibrary, MediaType } from 'react-native-image-picker';
 interface avaInterface {
-    onImageSelect: (asset: any) => void;
+    onImageSelect: (uri: string) => void;
 }
 export const Ava = ({ onImageSelect }: avaInterface) => {
     const [imageUri, setImageUri] = useState<string>('');
@@ -20,7 +20,7 @@ export const Ava = ({ onImageSelect }: avaInterface) => {
             } else if (response.errorMessage) {
                 Alert.alert(response.errorMessage);
             } else {
-                const selectedUri = response.assets?.[0].uri;
+                const selectedUri = response.assets?.[0]?.uri;
                 if (selectedUri) {
                     setImageUri(selectedUri);
                     onImageSelect(selectedUri);

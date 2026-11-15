@@ -1,11 +1,9 @@
 import { StatusBar, useColorScheme } from 'react-native';
-import {
-    SafeAreaProvider,
-    useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { createStaticNavigation } from '@react-navigation/native';
 
+import { CartProvider } from './src/features/cart/CartContext';
 import { RootStack } from './src/navigation/navigation.ts';
 const Navigation = createStaticNavigation(RootStack);
 function App() {
@@ -16,15 +14,11 @@ function App() {
             <StatusBar
                 barStyle={isDarkMode ? 'light-content' : 'dark-content'}
             />
-            <AppContent />
+            <CartProvider>
+                <Navigation />
+            </CartProvider>
         </SafeAreaProvider>
     );
-}
-
-function AppContent() {
-    const safeAreaInsets = useSafeAreaInsets();
-
-    return <Navigation />;
 }
 
 export default App;

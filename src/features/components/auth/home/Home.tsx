@@ -13,7 +13,7 @@ export const Home = () => {
                     style={homeStyles.imageStyle}
                 />
                 <Text style={homeStyles.text}>Shoppe</Text>
-                <Text>Beatiful eCommerence app</Text>
+                <Text>Your everyday shopping demo</Text>
             </View>
             <View style={homeStyles.bottomScreen}>
                 <ClassicButton
@@ -26,6 +26,11 @@ export const Home = () => {
                     title="I already have an account"
                     variant="white"
                     customStyle={homeStyles.loginButton}
+                />
+                <ClassicButton
+                    title="Browse demo shop"
+                    variant="white"
+                    onPress={() => navigation.navigate('mainScreens')}
                 />
             </View>
         </View>
